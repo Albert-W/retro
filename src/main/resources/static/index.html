@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Index Page</title>
+
+    <meta name="description" content="Source code generated using layoutit.com">
+    <meta name="author" content="LayoutIt!">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/style.css" rel="stylesheet"/>
+
+  </head>
+  <body>
+
+    <div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			<ul class="nav ">
+				<li class="nav-item">
+					<a class="nav-link active" href="index.html">Home</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="team.html">Team</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="sprint.html">Sprint</a>
+				</li>
+
+				<li class="nav-item login" >
+					<a class="nav-link" href="#">Login</a>
+				</li>
+
+				<li class="nav-item dropdown ">
+
+					<a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown">Action</a>
+					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+						<a class="dropdown-item" href="#">Action</a> <a class="dropdown-item" href="#">Another action</a> <a class="dropdown-item" href="#">Something else here</a>
+						<div class="dropdown-divider">
+						</div> <a class="dropdown-item" href="#">Separated link</a>
+					</div>
+				</li>
+			</ul>
+			<p id="intro" class="lead">
+				A <a href="https://en.wikipedia.org/wiki/Retrospective">retrospective</a> (from Latin retrospectare, "look back"), generally, is a look back at events that took place, or works that were produced in the past.
+			</p >
+
+			<p>
+				<mark>In software engineering</mark>, a retrospective is a meeting held by a project team at the end of a project or process (often after an iteration) to discuss what was successful about the project or time period covered by that retrospective, what could be improved, and how to incorporate the successes and improvements in future iterations or projects. Retrospective can be done in many different ways.
+			</p>
+
+			<p>
+				<mark>In agile development</mark>, retrospectives play a very important role in iterative and incremental development. At the end of every iteration a retrospective is held to look for ways to improve the process for the next iteration.
+			</p>
+
+			<p class="lead">
+				Retrospective form part of every Agile teamReferences way of working. This tool allows the managerment of retrospectives.
+			</p>
+
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<form action="team.html">
+				<!-- <input class="inputtext" placeholder="Team Name" onfocus="this.placeholder = ''"
+					   onblur="this.placeholder = 'enter your text'" name="teamName"> -->
+<!--				<input class="inputtext" id="createTeam" type="button" value="Create TeamReference" >-->
+				<button class="inputtext" id="createTeam" >Create Team</button>
+			</form>
+
+			<!-- <form action="getTeamsfromDB" >
+				<button class="inputtext" id="GetTeam">Get Teams</button>
+			</form>
+
+			<div  th:each="team:${teamReferences}"  class="inputtext">
+				<div th:text="${team.teamName}">Offline TeamName</div>
+
+			</div> -->
+
+		</div>
+		<div class="col-md-6">
+			<form action="sprint.html">
+				<button  class="inputtext" id="createSprint">Go To Retrospective Sprint</button>
+				<!-- <input class="inputtext" id="createSprint" type="button" value="Create Retrospective Sprint"> -->
+			</form>
+			<!-- <input class="inputtext" placeholder="Sprint Name" onfocus="this.placeholder = ''"
+			onblur="this.placeholder = 'enter your text'"> -->
+			
+		</div>
+	</div>
+</div>
+
+    <script src="js/jquery.min.js"></script>
+	<script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+  </body>
+</html>

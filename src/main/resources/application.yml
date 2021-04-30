@@ -1,0 +1,21 @@
+server:
+  port: 8090
+
+spring:
+  profiles:
+    active: development
+
+---
+spring:
+  profiles: development
+
+  data:
+    mongodb:
+      host: localhost
+---
+spring:
+  profiles: production
+
+  data:
+    mongodb:
+      host: mymongodb

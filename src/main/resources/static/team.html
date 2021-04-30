@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create Team</title>
+    <meta name="description" content="Source code generated using layoutit.com">
+    <meta name="author" content="LayoutIt!">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row ">
+         <div class="col-md-12">
+			<ul class="nav ">
+				<li class="nav-item">
+					<a class="nav-link active" href="index.html">Home</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link disabled" href="team.html">Team</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link " href="sprint.html">Sprint</a>
+				</li>
+
+				<li class="nav-item login" >
+					<a class="nav-link" href="#">Login</a>
+				</li>	
+
+				<li class="nav-item dropdown">
+
+					 <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown">Action</a>
+					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+						 <a class="dropdown-item" href="#">Action</a> <a class="dropdown-item" href="#">Another action</a> <a class="dropdown-item" href="#">Something else here</a>
+						<div class="dropdown-divider">
+						</div> <a class="dropdown-item" href="#">Separated link</a>
+					</div>
+				</li>
+			</ul>
+         </div>
+      </div>
+      <div class="row naviRow" >
+         <div class="col-md-4 board" >
+               <h4 class="title">Create a New Team</h4>
+               
+                  <input id="teamName" class="inputtext" type="text"  placeholder="Enter team name" th:name="teamName"/>
+                  <input id="createTeam"  class="inputtext" type="button" value="Create">
+                  <!-- <button type="submit">Create</button> -->
+
+                  
+               
+
+                  <!-- <input class="inputtext description" type="text"  placeholder="Enter team description"/>
+                  <input class="inputtext" type="button" value="Add description"> -->
+
+                  <h4 class="title" id="teamCreated"></h4>
+
+
+         </div>
+         <div class="col-md-4 board" >
+            <h4 class="title">Add Members</h4>
+
+               <input id="memberName" class="inputtext" type="text" placeholder="Add Team Members" />
+               <input id="addMember"  class="inputtext" type="button" value="Add">
+               <!-- <button type="submit">Add</button> -->
+               <div>
+                   <!-- <ul class="list-group" >
+                       <li class="list-group-item">
+                            <input type="checkbox" value="Tom">
+                            <span class="candidate">Tom</span>
+                       </li>
+                       <li class="list-group-item">
+                        <input type="checkbox" value="Tom">
+                        <span class="candidate">Tracy</span>
+                        </li>
+                   </ul>
+                   <input class="inputtext" type="button" value="Add all"> -->
+               </div>     
+
+
+         </div>
+         <div class="col-md-4 board" >
+            
+            
+            <span  class="badge badge-primary">Team </span>
+            <select id="selectTeam" class="custom-select">
+                <!-- <option selected>Select a team</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option> -->
+              </select>
+
+            <p>Members listed below:</p>
+            <ul id="listOfMember">
+               <!-- <li>Yichang</li>
+               <li>Gourav</li>
+               <li>Soham</li>
+               <li>Chibuike</li> -->
+               <!-- <li><li> -->
+            </ul>
+
+            
+
+            <input id="sprintName" class="inputtext" type="text"  placeholder="Sprint name"/>
+
+
+            <input id="goToSprint" class="inputtext" type="button" value="Go to the sprint" >
+
+            
+            
+         </div>
+      </div>
+      <!-- <div class="row">
+         <div class="col-md-8" >
+            <button class="button button3" type="submit">Return</button>
+         </div>
+      </div> -->
+   </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/team.js"></script>
+  </body>
+</html>

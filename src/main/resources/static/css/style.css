@@ -1,0 +1,106 @@
+/* # Empty CSS file for your own CSS */
+
+html,body { height:100%; }
+
+.container-fluid {
+    margin: 40px;
+    height: 90%;
+}
+p{
+    margin-top: 20px;
+    vertical-align: middle;
+}
+.inputtext{
+    text-align: center;
+    display: inline-block;
+    margin: 5px;
+    width: 80%;
+}
+
+.naviRow{
+    margin: 40px;
+}
+
+.board{
+    border: 1px;
+    border-style: solid;
+    /* height: 90%; */
+    height: 450px;
+    padding: 8px;
+    text-align: center;
+    overflow: auto;
+}
+
+.sprint-item{
+    height: 70px;
+    width: 100%;
+    border: 1px;
+    margin: 2px;
+    text-align: center;
+}
+
+input.sprint-item{
+    background-color: antiquewhite;
+}
+
+ul.glad > .sprint-item{
+    background-color: darkseagreen;
+}
+
+ul.sad > .sprint-item{
+    background-color: blueviolet;
+}
+
+ul.mad > .sprint-item{
+    background-color: hotpink;
+}
+
+.thumb, .comment{
+    background-color: transparent;
+    border-style: hidden;
+    outline:none;
+}
+input[type=button]:active{
+    border-style: hidden;
+    color: bisque;
+    background-color: aqua;
+}
+
+li{
+    position: relative;
+
+}
+.vote{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin-right: 5px;
+    
+}
+.votescore{
+    color: #fff;
+}
+/* input[type=button]:hover{  background-color: #46000D} */
+.login{
+    margin-left: auto;
+}
+form{
+    margin: 0 auto; 
+    text-align: center;
+}
+
+.description{
+    height: 16em;
+}
+.title{
+    text-align: center;
+}
+.list-group{
+    width: 80%;
+    margin-left: 10%;
+}
+
+.sprintInfo{
+    margin-top: 12px;
+    font-size: large;
+}
