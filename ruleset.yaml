@@ -58,7 +58,7 @@ rules:
         - -v /c/Users/eyicwux/.m2/repository/:/tmp/.m2/repository/
         - -v /c/Users/eyicwux/.m2/settings.xml:/tmp/.m2/settings.xml
         - -v /c/Users/eyicwux/.gitconfig:/root/.gitconfig
-        - -v $(pwd)/.ssh:/root/.ssh/:ro
+        - -v /c/Users/eyicwux/.ssh:/root/.ssh/:ro
         - --user root:root
       cmd:
         - mvn -f pom.xml -gs /tmp/.m2/settings.xml -Dmaven.repo.local=/tmp/.m2/repository/ release:prepare release:perform -Darguments=${MVN_FLAGS}  -Darguments="-DskipTests" -e
