@@ -54,11 +54,12 @@ rules:
       cmd: mvn -f bro-agent-api/pom.xml -gs /tmp/.m2/settings.xml -Dmaven.repo.local=/tmp/.m2/repository/ install surefire-report:report-only sonar:sonar -Darguments=${MVN_FLAGS} -Dsonar.analysis.mode=publish -Dsonar.branch.name=${GERRIT_BRANCH}
     - task: release
       docker-image: java11-mvn-builder
+      docker-mounts:
+        - "/c/Users/eyicwux/.m2/repository/:/tmp/.m2/repository/"
+        - "/c/Users/eyicwux/.m2/settings.xml:/tmp/.m2/settings.xml"
+        - "/c/Users/eyicwux/.gitconfig:/root/.gitconfig"
+        - "/c/Users/eyicwux/.ssh:/root/.ssh/"
       docker-flags:
-        - -v /c/Users/eyicwux/.m2/repository/:/tmp/.m2/repository/
-        - -v /c/Users/eyicwux/.m2/settings.xml:/tmp/.m2/settings.xml
-        - -v /c/Users/eyicwux/.gitconfig:/root/.gitconfig
-        - -v /c/Users/eyicwux/.ssh:/root/.ssh/:ro
         - --user root:root
       cmd:
         - mvn -f pom.xml -gs /tmp/.m2/settings.xml -Dmaven.repo.local=/tmp/.m2/repository/ release:prepare release:perform -Darguments=${MVN_FLAGS}  -Darguments="-DskipTests" -e
