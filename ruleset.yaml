@@ -1,0 +1,193 @@
+modelVersion: 2.0
+
+docker-images:
+  - adp-bro-agent-api-cpp-python: armdocker.rnd.ericsson.se/sandbox/adp-staging/adp-cicd/bro-agent-api-cpp-python:latest
+  - adp-release-auto: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-adp-release-auto:latest
+  - java11-mvn-builder: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-java11mvnbuilder.adp-base-os:1.2.1-0
+
+properties:
+  - arm-pypi-repo: https://arm.sero.gic.ericsson.se/artifactory/proj-adp-eric-ctrl-bro-python-api-pypi-local
+  - bazel-cache-directory: ${env.PWD}/bazel-cache
+  - ci-user: ci-user
+  - home-dir: /tmp/${ci-user}
+  - released-wheel: bro_agent-${var.version}-py3-none-any.whl
+  - MVN_FLAGS: ""
+  - GERRIT_BRANCH: ""
+
+env:
+  - API_TOKEN
+  - PWD
+  - RELEASE
+  - SONAR_AUTH_TOKEN
+  - SONARQUBE_SCANNER_PARAMS
+  - SONAR_HOST_URL
+
+var:
+  - version
+  - rstate
+  - IMAGE_CREATED
+
+rules:
+  license-agreement:
+    - task: validate-license-agreement
+      docker-image: adp-release-auto
+      cmd: license-agreement validate -l bro-agent-api/Documentation/license.agreement.json
+
+  prepare-environment:
+    - task: prepare
+      cmd: bash -c 'if [ -e ${bazel-cache-directory} ]; then
+        if [ $(stat -c "%U" ${bazel-cache-directory}) != "$USER" ]; then
+        echo "${bazel-cache-directory} permission is wrong please remove this directory!";
+        fi
+        fi &&
+        mkdir -p ${bazel-cache-directory}'
+
+  mvn:
+    - task: package-test-sonar
+      docker-image: java11-mvn-builder
+      docker-flags:
+        - -v /home/lciadm100/.m2/repository/:/tmp/.m2/repository/
+        - -v /home/lciadm100/.m2/settings.xml:/tmp/.m2/settings.xml
+        - --env SONAR_AUTH_TOKEN=${env.SONAR_AUTH_TOKEN}
+        - --env SONARQUBE_SCANNER_PARAMS=$(echo '${env.SONARQUBE_SCANNER_PARAMS}' | tr -d ' ')
+        - --env SONAR_HOST_URL=${env.SONAR_HOST_URL}
+      cmd: mvn -f bro-agent-api/pom.xml -gs /tmp/.m2/settings.xml -Dmaven.repo.local=/tmp/.m2/repository/ install surefire-report:report-only sonar:sonar -Darguments=${MVN_FLAGS} -Dsonar.analysis.mode=publish -Dsonar.branch.name=${GERRIT_BRANCH}
+    - task: release
+      docker-image: java11-mvn-builder
+      docker-flags:
+        - -v /c/Users/eyicwux/.m2/repository/:/tmp/.m2/repository/
+        - -v /c/Users/eyicwux/.m2/settings.xml:/tmp/.m2/settings.xml
+        - -v /c/Users/eyicwux/.gitconfig:/root/.gitconfig
+
+        - --user root:root
+      cmd:
+        - mvn -f pom.xml -gs /tmp/.m2/settings.xml -Dmaven.repo.local=/tmp/.m2/repository/ release:prepare release:perform -Darguments=${MVN_FLAGS}  -Darguments="-DskipTests" -e
+
+  build-cpp-python-environment:
+    - task: docker
+      cmd: docker build -t armdocker.rnd.ericsson.se/sandbox/adp-staging/adp-cicd/bro-agent-api-cpp-python:latest -f ./bro-agent-api/Docker/Dockerfile .
+
+  build-bro-agent-api-cpp:
+    - rule: prepare-environment
+    - task: build
+      docker-image: adp-bro-agent-api-cpp-python
+      docker-flags:
+        - --env HOME=${home-dir}
+        - --env USER=${ci-user}
+        - -v ${bazel-cache-directory}:${home-dir}/.cache
+      cmd:
+        - bash -c "cd $(pwd)/bro-agent-api/src &&
+          bazel build //main/cpp/...:all"
+
+  build-bro-agent-api-python:
+    - rule: prepare-environment
+    - rule: build-cpp-python-environment
+    - task: build
+      docker-image: adp-bro-agent-api-cpp-python
+      docker-flags:
+        - --env HOME=${home-dir}
+        - --env USER=${ci-user}
+        - -v ${bazel-cache-directory}:${home-dir}/.cache
+      cmd:
+        - bash -c "cd $(pwd)/bro-agent-api/src &&
+          bazel build //main/python:bro_agent"
+
+  unit-test-bro-agent-api-cpp:
+    - task: unit-test
+      docker-image: adp-bro-agent-api-cpp-python
+      docker-flags:
+        - --env HOME=${home-dir}
+        - --env USER=${ci-user}
+        - -v ${bazel-cache-directory}:${home-dir}/.cache
+      cmd:
+        - bash -c "cd $(pwd)/bro-agent-api/src &&
+          bazel test //test/cpp/...:all"
+
+  unit-test-bro-agent-api-python:
+    - rule: build-bro-agent-api-python
+    - task: unit-test
+      docker-image: adp-bro-agent-api-cpp-python
+      docker-flags:
+        - --env HOME=${home-dir}
+        - --env USER=${ci-user}
+        - -v ${bazel-cache-directory}:${home-dir}/.cache
+      cmd:
+        - bash -c "cd $(pwd)/bro-agent-api/src &&
+          bazel test //test/python/...:all"
+
+  create-whl-package-bro-agent-api-python:
+    - task: package
+      docker-image: adp-bro-agent-api-cpp-python
+      docker-flags:
+        - --env HOME=${home-dir}
+        - --env USER=${ci-user}
+        - -v ${bazel-cache-directory}:${home-dir}/.cache
+      cmd:
+        - bash -c "cd $(pwd)/bro-agent-api/src &&
+          bazel build //main/python:bro_agent_api_whl"
+
+  quality-check-bro-agent-api-cpp:
+    - task: cppcheck
+      docker-image: adp-bro-agent-api-cpp-python
+      docker-flags:
+        - --env HOME=${home-dir}
+        - --env USER=${ci-user}
+        - -v ${bazel-cache-directory}:${home-dir}/.cache
+      cmd:
+        - bash -c 'printf "%s" $(git diff --no-ext-diff --name-only --diff-filter=AMT HEAD^ HEAD -- "*.c" "*.cc" "*.cpp" "*.h" "*.hh" "*.hpp")
+          | xargs -d "\\n" --no-run-if-empty cppcheck --xml --xml-version=2 --error-exitcode=1'
+
+    - task: clang-format
+      docker-image: adp-bro-agent-api-cpp-python
+      docker-flags:
+        - --env HOME=${home-dir}
+        - --env USER=${ci-user}
+        - -v ${bazel-cache-directory}:${home-dir}/.cache
+      cmd:
+        - bash -c 'printf "%s" $(git diff --no-ext-diff --name-only --diff-filter=AMT HEAD^ HEAD -- "*.c" "*.cc" "*.cpp" "*.h" "*.hh" "*.hpp")
+          | xargs -d "\\n" --no-run-if-empty run-clang-format'
+
+  quality-check-bro-agent-api-python:
+    - task: flake8
+      docker-image: adp-bro-agent-api-cpp-python
+      docker-flags:
+        - --env HOME=${home-dir}
+        - --env USER=${ci-user}
+        - -v ${bazel-cache-directory}:${home-dir}/.cache
+      cmd:
+        - bash -c 'cd $(pwd)/bro-agent-api/src/main/python/bro_agent &&
+          flake8 --extend-ignore=E501 --per-file-ignores=agent/states.py:F401 .'
+    - task: bandit
+      docker-image: adp-bro-agent-api-cpp-python
+      docker-flags:
+        - --env HOME=${home-dir}
+        - --env USER=${ci-user}
+        - -v ${bazel-cache-directory}:${home-dir}/.cache
+      cmd:
+        - bash -c 'cd $(pwd)/bro-agent-api/src/main/python/bro_agent &&
+          bandit -r .'
+
+
+  release-bro-agent-api-python:
+    - task: version
+      docker-image: adp-release-auto
+      cmd: version-handler generate
+        --is-release ${env.RELEASE}
+        --output version
+        --version-prefix-file bro-agent-api/PYTHON_VERSION_PREFIX
+        --git-repo-path .
+    - task: propagate-new-version-to-bazel
+      cmd: echo "PYTHON_AGENT_WHL_VERSION = '${var.version}'" > bro-agent-api/src/bazel/version.bzl
+    - rule: create-whl-package-bro-agent-api-python
+    - task: git-tag release
+      cmd:
+        - git tag -a "python-agent-api-${var.version}" -m "Release ${var.version}" HEAD
+        - git push origin "python-agent-api-${var.version}"
+    - task: release
+      docker-image: adp-release-auto
+      docker-flags:
+        - --env HOME=${home-dir}
+        - --env USER=${ci-user}
+        - -v ${bazel-cache-directory}:${home-dir}/.cache
+      cmd:
+        - upload_file.sh --filename=bro-agent-api/src/bazel-bin/main/python/${released-wheel} --repository=${arm-pypi-repo} --api-token=${env.API_TOKEN}
