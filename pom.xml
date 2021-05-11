@@ -144,6 +144,6 @@
 		<connection>scm:git:git@github.com:Albert-W/retro.git</connection>
 		<url>https://github.com/Albert-W/retro</url>
 		<developerConnection>scm:git:git@github.com:Albert-W/retro.git</developerConnection>
-	  <tag>v0.0.9</tag>
+	  <tag>v0.0.10</tag>
   </scm>
 </project>
